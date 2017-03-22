@@ -32,6 +32,7 @@ module.exports = yeoman.Base.extend({
   writing: function () {
     const elementName = this.props.elementName;
     const parentFolder = this.props.parentFolder;
+    this.props.className = jsUcfirst(toCamelCase(elementName))
 
     this.fs.copyTpl(
       this.templatePath('element.html'),
@@ -39,7 +40,7 @@ module.exports = yeoman.Base.extend({
       this.props
     );
 
-     this.fs.copyTpl(
+    this.fs.copyTpl(
       this.templatePath('element_test.html'),
       this.destinationPath(`test/${elementName}.html`),
       this.props
@@ -50,3 +51,13 @@ module.exports = yeoman.Base.extend({
     // this.installDependencies();
   }
 });
+
+function toCamelCase(name) {
+  return name.replace(/-([a-z])/g, (g) => {
+    return g[1].toUpperCase()
+  })
+}
+function jsUcfirst(name) 
+{
+    return name.charAt(0).toUpperCase() + name.slice(1);
+}

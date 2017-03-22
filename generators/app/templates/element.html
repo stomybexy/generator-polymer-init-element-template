@@ -1,5 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
+<!--
+`select-element`
+
+
+@demo demo/index.html
+-->
+
 <dom-module id="<%= elementName %>">
   <template>
     <style>
@@ -7,24 +14,22 @@
         display: block;
       }
     </style>
-
     <h2>Hello [[prop1]]</h2>
-
-    <div class="circle">1</div>
-
   </template>
 
   <script>
-    Polymer({
-      is: '<%= elementName %>',
-
-      properties: {
+    class <%= className %> extends Polymer.Element {
+      static get is() { return '<%= elementName %>'; }
+      static get properties() {
+        return {
           prop1: {
-              type: String,
-              value: '<%= elementName %>',
-          },
-      },
+            type: String,
+            value: '<%= elementName %>'
+          }
+        };
+      }
+    }
 
-    });
+    window.customElements.define(<%= className %>.is, <%= className %>);
   </script>
 </dom-module>
