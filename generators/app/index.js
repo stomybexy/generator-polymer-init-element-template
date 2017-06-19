@@ -32,6 +32,7 @@ module.exports = yeoman.Base.extend({
   writing: function () {
     const elementName = this.props.elementName;
     const parentFolder = this.props.parentFolder;
+    const testParentFolder = parentFolder.replace('src', 'test');
     this.props.className = jsUcfirst(toCamelCase(elementName))
 
     this.fs.copyTpl(
@@ -42,7 +43,7 @@ module.exports = yeoman.Base.extend({
 
     this.fs.copyTpl(
       this.templatePath('element_test.html'),
-      this.destinationPath(`test/${elementName}.html`),
+      this.destinationPath(`${testParentFolder}/${elementName}_test.html`),
       this.props
     );
   },
