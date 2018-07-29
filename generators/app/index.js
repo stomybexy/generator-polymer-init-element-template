@@ -1,64 +1,86 @@
 'use strict';
-var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
-var yosay = require('yosay');
-var path = require('path');
+const Generator = require('yeoman-generator');
+const chalk = require('chalk');
+const yosay = require('yosay');
+const changeCase = require('change-case');
 
-module.exports = yeoman.Base.extend({
-  prompting: function () {
+module.exports = class extends Generator {
+  prompting() {
     // Have Yeoman greet the user.
-    this.log(yosay(
-      'Welcome to the magnificent ' + chalk.red('generator-polymer-init-element-template') + ' generator!'
-    ));
+    this.log(
+      yosay(
+        `Welcome to the tiptop ${chalk.red(
+          'generator-polymer-init-element-template'
+        )} generator!`
+      )
+    );
 
-    var prompts = [{
-      type: 'input',
-      name: 'elementName',
-      message: 'How would you like to call your element?',
-      default: process.cwd().split(path.sep).pop() + '-element'
-    }, {
-      type: 'input',
-      name: 'parentFolder',
-      message: 'Where would you like to put your element?',
-      default: 'src'
-    }];
+    const prompts = [
+      {
+        type: 'input',
+        name: 'elementName',
+        message: 'What is the name of your element?',
+        default: 'my-element'
+      },
+      {
+        type: 'input',
+        name: 'destFolder',
+        message: `Where would you like to put your element?`,
+        default: 'src/components/elements'
+      },
+      {
+        type: 'confirm',
+        name: 'generateTest',
+        message: `Would you like to generate test file?`,
+        default: true
+      }
+    ];
 
-    return this.prompt(prompts).then(function (props) {
+    return this.prompt(prompts).then(props => {
       // To access props later use this.props.someAnswer;
       this.props = props;
-    }.bind(this));
-  },
-
-  writing: function () {
-    const elementName = this.props.elementName;
-    const parentFolder = this.props.parentFolder;
-    const testParentFolder = parentFolder.replace('src', 'test');
-    this.props.className = jsUcfirst(toCamelCase(elementName))
-
-    this.fs.copyTpl(
-      this.templatePath('element.html'),
-      this.destinationPath(`${parentFolder}/${elementName}.html`),
-      this.props
-    );
-
-    this.fs.copyTpl(
-      this.templatePath('element_test.html'),
-      this.destinationPath(`${testParentFolder}/${elementName}_test.html`),
-      this.props
-    );
-  },
-
-  install: function () {
-    // this.installDependencies();
+    });
   }
-});
 
-function toCamelCase(name) {
-  return name.replace(/-([a-z])/g, (g) => {
-    return g[1].toUpperCase()
-  })
-}
-function jsUcfirst(name) 
-{
-    return name.charAt(0).toUpperCase() + name.slice(1);
-}
+  writing() {
+    const className = changeCase.pascalCase(this.props.elementName);
+    const displayName = changeCase.sentenceCase(this.props.elementName);
+    const destFolder = this.props.destFolder;
+    const elementName = this.props.elementName;
+
+    let computedDestFolder;
+
+    if (this.props.generateTest) {
+      computedDestFolder = `${destFolder}/${elementName}`;
+    } else {
+      computedDestFolder = `${destFolder}`;
+    }
+
+    this.fs.copyTpl(
+      this.templatePath('_element.js'),
+      this.destinationPath(`${computedDestFolder}/${elementName}.js`),
+      {
+        ...this.props,
+        className,
+        displayName
+      }
+    );
+    if (this.props.generateTest) {
+      this.fs.copyTpl(
+        this.templatePath('_element_test.html'),
+        this.destinationPath(`${computedDestFolder}/${elementName}_test.html`),
+        {
+          ...this.props,
+          className,
+          displayName
+        }
+      );
+    }
+  }
+
+  install() {
+    if (this.props.generateTest) {
+      console.log('Do not forget to add test in unit test suites');
+    }
+  }
+};

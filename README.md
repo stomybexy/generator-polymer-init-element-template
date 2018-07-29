@@ -1,5 +1,5 @@
 # generator-polymer-init-element-template [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
-> A skeleton for new polymer element inside an app
+> Generate a element that extends LitElement inside a pwa-light app
 
 ## Installation
 
@@ -25,7 +25,7 @@ yo polymer-init-element-template
 
 ## License
 
-MIT © [Jonatan Sombié]()
+MIT © [jonatan]()
 
 
 [npm-image]: https://badge.fury.io/js/generator-polymer-init-element-template.svg
