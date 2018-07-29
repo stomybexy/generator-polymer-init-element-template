@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title><%= displayName %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+        // Redux assumes `process.env.NODE_ENV` exists in the ES module build.
+        // https://github.com/reactjs/redux/issues/2907
+        window.process = { env: { NODE_ENV: 'production' } };
+    </script>
+
+    <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+    <script src="/node_modules/wct-browser-legacy/browser.js"></script>
+
+    <!-- Import the element to test -->
+    <script type="module" src="./<%= elementName %>.js"></script>
+</head>
+
+<body>
+    <test-fixture id="basic">
+        <template>
+            <<%= elementName %>></<%= elementName %>>
+        </template>
+    </test-fixture>
+
+    <script type="module">
+        import 'axe-core/axe.min.js';
+        import { axeReport } from 'pwa-helpers/axe-report.js';
+
+        suite('<%= elementName %> tests', function () {
+            let el;
+            setup(function () {
+                el = fixture('basic');
+            });
+
+            test('basic test', function () {
+                assert.equal(el.name, '<%= displayName %>');
+            });
+
+            test('a11y', function () {
+                return axeReport(el);
+            });
+        });
+    </script>
+</body>
+
+</html>
