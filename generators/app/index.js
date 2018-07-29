@@ -27,6 +27,12 @@ module.exports = class extends Generator {
         name: 'destFolder',
         message: `Where would you like to put your element?`,
         default: 'src/components/elements'
+      },
+      {
+        type: 'confirm',
+        name: 'generateTest',
+        message: `Would you like to generate test file?`,
+        default: true
       }
     ];
 
@@ -42,27 +48,39 @@ module.exports = class extends Generator {
     const destFolder = this.props.destFolder;
     const elementName = this.props.elementName;
 
+    let computedDestFolder;
+
+    if (this.props.generateTest) {
+      computedDestFolder = `${destFolder}/${elementName}`;
+    } else {
+      computedDestFolder = `${destFolder}`;
+    }
+
     this.fs.copyTpl(
       this.templatePath('_element.js'),
-      this.destinationPath(`${destFolder}/${elementName}/${elementName}.js`),
+      this.destinationPath(`${computedDestFolder}/${elementName}.js`),
       {
         ...this.props,
         className,
         displayName
       }
     );
-    this.fs.copyTpl(
-      this.templatePath('_element_test.html'),
-      this.destinationPath(`${destFolder}/${elementName}/${elementName}_test.html`),
-      {
-        ...this.props,
-        className,
-        displayName
-      }
-    );
+    if (this.props.generateTest) {
+      this.fs.copyTpl(
+        this.templatePath('_element_test.html'),
+        this.destinationPath(`${computedDestFolder}/${elementName}_test.html`),
+        {
+          ...this.props,
+          className,
+          displayName
+        }
+      );
+    }
   }
 
   install() {
-    console.log('Do not forget to add test in unit test suites');
+    if (this.props.generateTest) {
+      console.log('Do not forget to add test in unit test suites');
+    }
   }
 };
