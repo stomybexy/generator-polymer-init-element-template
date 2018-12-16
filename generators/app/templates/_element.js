@@ -1,7 +1,7 @@
 import { LitElement, html } from '@polymer/lit-element';
 
 class <%= className %> extends LitElement {
-    _render({ name }) {
+    render({ name }) {
         return html`
             <p>Hello from ${name}</p>
         `;
